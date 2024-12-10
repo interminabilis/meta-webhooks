@@ -2,12 +2,11 @@ const express = require("express");
 const bodyParser = require("body-parser");
 const crypto = require("crypto");
 
-// Create Express app
 const app = express();
 
-// Replace these with your actual values
-const VERIFY_TOKEN = "your_verify_token"; // Replace with the token you set in Meta Dashboard
-const APP_SECRET = "your_app_secret";    // Replace with your app's secret from Meta Dashboard
+// Replace with your environment variables or hardcode temporarily for testing
+const VERIFY_TOKEN = process.env.VERIFY_TOKEN || "your_verify_token";
+const APP_SECRET = process.env.APP_SECRET || "your_app_secret";
 
 // Middleware to verify request signatures
 function verifyRequestSignature(req, res, buf) {
@@ -16,7 +15,6 @@ function verifyRequestSignature(req, res, buf) {
         console.warn("No signature found");
         return;
     }
-
     const elements = signature.split("=");
     const signatureHash = elements[1];
     const expectedHash = crypto
@@ -64,7 +62,8 @@ app.post("/webhook", (req, res) => {
                 const messageText = webhookEvent.message.text;
                 console.log(`Message from ${senderId}: ${messageText}`);
 
-                // Example: Respond to the user (not implemented in this snippet)
+                // Example: Respond to the user (implement your logic here)
+                // sendMessage(senderId, "Thanks for your message!");
             }
         });
 
@@ -74,6 +73,12 @@ app.post("/webhook", (req, res) => {
         res.sendStatus(404); // Not Found if not a page subscription
     }
 });
+
+// Function to send a message (implement your messaging logic here)
+function sendMessage(recipientId, messageText) {
+    console.log(`Sending message to ${recipientId}: ${messageText}`);
+    // Add your logic to send a message using the Graph API
+}
 
 // Start the server
 const PORT = process.env.PORT || 1337;
